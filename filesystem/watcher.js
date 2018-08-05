@@ -12,7 +12,13 @@ fs.watch(
     target, 
     () => {
         const ls = spawn("ls", ["-l", "-h", target]);
-        ls.stdout.pipe(process.stdout);
+        let output = "";
+        ls.stdout.on("data", chunk => output += chunk);
+
+        ls.on("close", () => {
+            console.log(process);
+            process.stdout.write(output);
+        });
     });
-    
+
 console.log(`Watching ${target} for changes.`);
